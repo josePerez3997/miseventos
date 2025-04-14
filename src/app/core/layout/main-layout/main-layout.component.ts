@@ -1,11 +1,15 @@
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../header/header.component';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-main-layout',
-  imports: [],
   templateUrl: './main-layout.component.html',
-  styleUrl: './main-layout.component.scss'
+  styleUrls: ['./main-layout.component.scss'],
+  standalone: true,
+  imports: [RouterModule, HeaderComponent, FooterComponent]
 })
 export class MainLayoutComponent {
-
+  constructor() {}
 }
