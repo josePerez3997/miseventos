@@ -5,7 +5,7 @@ import { AuthService, User } from '../../../auth/services/auth.service';
 @Component({
     selector: 'app-profile-page',
     templateUrl: './profile-page.component.html',
-    styleUrl: './profile-page.component.css',
+    styleUrl: './profile-page.component.scss',
     standalone: true,
     imports: [CommonModule]
 })

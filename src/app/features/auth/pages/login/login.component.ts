@@ -16,31 +16,31 @@ export class LoginComponent {
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)])
   });
-
+  
   isSubmitting = false;
   errorMessage = '';
-
+  
   constructor(
     private authService: AuthService,
     private router: Router
-  ) { }
-
+  ) {}
+  
   get email() {
     return this.loginForm.get('email')!;
   }
-
+  
   get password() {
     return this.loginForm.get('password')!;
   }
-
+  
   onSubmit() {
     if (this.loginForm.invalid) {
       return;
     }
-
+    
     this.isSubmitting = true;
     this.errorMessage = '';
-
+    
     this.authService.login(this.loginForm.value).subscribe({
       next: (user) => {
         console.log('Login successful', user);
