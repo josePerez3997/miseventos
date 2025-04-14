@@ -22,7 +22,7 @@ export class HomePageComponent implements OnInit {
   searchControl = new FormControl('');
   loading = false;
   error = '';
-  Math = Math; // Make Math available in the template
+  Math = Math;
 
   constructor(
     private eventRepository: EventRepository,
@@ -31,7 +31,6 @@ export class HomePageComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Get query params from URL
     this.route.queryParams.subscribe(params => {
       this.page = params['page'] ? parseInt(params['page'], 10) : 1;
       if (params['search']) {
@@ -40,7 +39,6 @@ export class HomePageComponent implements OnInit {
       this.loadEvents();
     });
 
-    // Setup search with debounce
     this.searchControl.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged()
@@ -76,7 +74,6 @@ export class HomePageComponent implements OnInit {
     this.page = page;
     this.updateUrl();
     this.loadEvents();
-    // Scroll to top of the page
     window.scrollTo(0, 0);
   }
 

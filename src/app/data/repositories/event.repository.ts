@@ -13,7 +13,6 @@ export class EventRepository {
   constructor(private http: HttpClient) { }
 
   getEvents(params: EventSearchParams): Observable<EventListResponse> {
-    // Datos mock para mostrar
 
     const mockEvents: Event[] = [
       {
@@ -116,7 +115,6 @@ export class EventRepository {
   }
 
   getEventById(id: number): Observable<Event> {
-    // Mock para simular la obtención de un evento por ID
     const mockEvent: Event = {
       id: id,
       name: 'Tech Conference 2025',

@@ -19,14 +19,12 @@ export class HeaderComponent implements OnInit {
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
-    // Verificar estado de autenticación actual
     this.isLoggedIn = this.authService.isLoggedIn;
 
     if (this.isLoggedIn && this.authService.currentUser) {
       this.userName = this.authService.currentUser.name;
     }
 
-    // Suscribirse a cambios en el estado de autenticación
     this.authService.currentUser$.subscribe(user => {
       this.isLoggedIn = !!user;
       this.userName = user ? user.name : '';
