@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { delay, Observable, of } from 'rxjs';
 import { Event, EventListResponse, EventSearchParams, EventStatus } from '../../core/models/event.model';
 import { environment } from '../../../environments/environments';
 
@@ -102,6 +102,14 @@ export class EventRepository {
       filteredEvents = filteredEvents.filter(event => event.status === params.status);
     }
 
+    // Filtrar por categoría si es necesario
+    if (params.category && params.category !== 'all') {
+      filteredEvents = filteredEvents.filter(
+        event => event.categories?.includes(params.category!)
+      );
+    }
+
+    // Paginar los resultados
     const startIndex = (params.page - 1) * params.pageSize;
     const endIndex = startIndex + params.pageSize;
     const paginatedEvents = filteredEvents.slice(startIndex, endIndex);
@@ -111,15 +119,15 @@ export class EventRepository {
       totalCount: filteredEvents.length,
       pageSize: params.pageSize,
       currentPage: params.page
-    });
+    }).pipe(delay(500));
   }
 
   getEventById(id: number): Observable<Event> {
     const mockEvent: Event = {
       id: id,
-      name: 'Tech Conference 2025',
-      description: 'The biggest tech conference with the latest trends in AI, Web Development, Mobile and Cloud.',
-      location: 'Convention Center, New York',
+      name: 'Conferencia de Tecnología 2025',
+      description: 'La conferencia de tecnología más grande con las últimas tendencias en IA, Desarrollo Web, Móvil y Nube.',
+      location: 'Centro de Convenciones, Nueva York',
       date: new Date('2025-06-15'),
       capacity: 500,
       registeredAttendees: 350,
@@ -129,6 +137,21 @@ export class EventRepository {
     };
 
     return of(mockEvent);
+  }
+
+  registerForEvent(eventId: number, userId: number): Observable<boolean> {
+    // Simulamos una operación de registro exitosa
+    return of(true).pipe(delay(800));
+  }
+
+  unregisterFromEvent(eventId: number, userId: number): Observable<boolean> {
+    // Simulamos una operación de cancelación de registro exitosa
+    return of(true).pipe(delay(800));
+  }
+
+  checkRegistrationStatus(eventId: number, userId: number): Observable<boolean> {
+    // Para simulación, consideramos que el usuario está registrado a eventos con ID par
+    return of(eventId % 2 === 0).pipe(delay(300));
   }
 
 }
