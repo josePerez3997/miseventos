@@ -34,7 +34,7 @@
                 <span class="user-icon">
                   <i class="fas fa-user-circle"></i>
                 </span>
-                <span class="user-name">Profile</span>
+                <span class="user-name">{{ userName || 'Profile' }}</span>
               </a>
               <button class="btn btn-logout" (click)="logout()">Cerrar Sesión</button>
             </div>

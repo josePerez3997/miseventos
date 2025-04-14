@@ -1,1 +1,84 @@
-<p>register works!</p>
+<div class="register-container">
+    <div class="register-card">
+      <h2>Create Account</h2>
+      <div *ngIf="successMessage" class="success-alert">
+        {{ successMessage }}
+      </div>
+      <div *ngIf="errorMessage" class="error-alert">
+        {{ errorMessage }}
+      </div>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" *ngIf="!successMessage">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input 
+            type="text" 
+            id="name" 
+            formControlName="name" 
+            placeholder="Enter your full name"
+          >
+          <div class="error-message" *ngIf="name.invalid && (name.dirty || name.touched)">
+            <span *ngIf="name.errors?.['required']">Name is required.</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            placeholder="Enter your email"
+          >
+          <div class="error-message" *ngIf="email.invalid && (email.dirty || email.touched)">
+            <span *ngIf="email.errors?.['required']">Email is required.</span>
+            <span *ngIf="email.errors?.['email']">Enter a valid email address.</span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            formControlName="password" 
+            placeholder="Create a password"
+          >
+          <div class="error-message" *ngIf="password.invalid && (password.dirty || password.touched)">
+            <span *ngIf="password.errors?.['required']">Password is required.</span>
+            <span *ngIf="password.errors?.['minlength']">Password must be at least 6 characters.</span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            formControlName="confirmPassword" 
+            placeholder="Confirm your password"
+          >
+          <div class="error-message" *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)">
+            <span *ngIf="confirmPassword.errors?.['required']">Please confirm your password.</span>
+          </div>
+          <div class="error-message" *ngIf="registerForm.errors?.['passwordMismatch'] && confirmPassword.dirty">
+            Passwords do not match.
+          </div>
+        </div>
+        
+        <button 
+          type="submit" 
+          class="btn btn-primary btn-block" 
+          [disabled]="registerForm.invalid || isSubmitting"
+        >
+          {{ isSubmitting ? 'Creating Account...' : 'Register' }}
+        </button>
+      </form>
+      
+      <div class="register-footer">
+        <p>Already have an account? <a routerLink="/auth/login">Login</a></p>
+        <p *ngIf="successMessage">
+          <button class="btn btn-primary" (click)="navigateToLogin()">Go to Login</button>
+        </p>
+      </div>
+    </div>
+</div>
