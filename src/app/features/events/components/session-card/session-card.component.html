@@ -1,0 +1,43 @@
+<div class="session-card">
+    <div class="session-time">
+      <span class="time-range">{{ formatTimeRange(session.startTime, session.endTime) }}</span>
+      <span class="time-duration">{{ calculateDuration(session.startTime, session.endTime) }}</span>
+    </div>
+    
+    <div class="session-content">
+      <h4 class="session-title">{{ session.title }}</h4>
+      
+      <div class="session-details">
+        <div class="session-speaker">
+          <div class="speaker-avatar">
+            <img *ngIf="session.speaker.imageUrl" [src]="session.speaker.imageUrl" [alt]="session.speaker.name">
+            <div *ngIf="!session.speaker.imageUrl" class="avatar-placeholder">
+              {{ session.speaker.name.charAt(0) }}
+            </div>
+          </div>
+          <div class="speaker-info">
+            <span class="speaker-name">{{ session.speaker.name }}</span>
+            <span class="speaker-bio">{{ session.speaker.bio }}</span>
+          </div>
+        </div>
+        
+        <p class="session-description">{{ session.description }}</p>
+        
+        <div class="session-meta">
+          <div class="session-location">
+            <i class="meta-icon fas fa-map-marker-alt"></i>
+            <span>{{ session.location }}</span>
+          </div>
+          
+          <div class="session-capacity">
+            <i class="meta-icon fas fa-users"></i>
+            <span>{{ session.registeredAttendees }} / {{ session.capacity }}</span>
+            <span class="capacity-status" 
+                  [ngClass]="{'spots-available': !isFullyBooked, 'fully-booked': isFullyBooked}">
+              {{ isFullyBooked ? 'Fully Booked' : availableSpots + ' spots available' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>

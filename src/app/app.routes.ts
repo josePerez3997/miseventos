@@ -5,6 +5,7 @@ import { authGuard, noAuthGuard } from './features/auth/guards/auth.guard';
 import { CreateEventComponent } from './features/events/pages/create-event/create-event.component';
 import { MyEventsComponent } from './features/events/pages/my-events/my-events.component';
 import { ProfilePageComponent } from './features/profile/pages/profile-page/profile-page.component';
+import { EventDetailComponent } from './features/events/pages/event-detail/event-detail.component';
 
 export const routes: Routes = [
   {
@@ -14,6 +15,10 @@ export const routes: Routes = [
       {
         path: '',
         component: HomePageComponent
+      },
+      {
+        path: 'events/:id',
+        component: EventDetailComponent
       },
       {
         path: 'auth',
