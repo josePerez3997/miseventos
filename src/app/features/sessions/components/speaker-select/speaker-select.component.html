@@ -1,0 +1,53 @@
+<div class="speaker-select-container">
+    <div class="form-group">
+      <label for="speakerSelect">Seleccionar Ponente</label>
+      
+      <div *ngIf="loading" class="loading-indicator">
+        <div class="spinner-sm"></div> Cargando ponentes...
+      </div>
+      
+      <select 
+        *ngIf="!loading"
+        id="speakerSelect" 
+        class="form-control"
+        [(ngModel)]="selectedSpeakerId"
+        (change)="onSpeakerChange($event)"
+      >
+        <option [value]="undefined">Seleccione un ponente</option>
+        <option *ngFor="let speaker of speakers" [value]="speaker.id">
+          {{ speaker.name }}
+        </option>
+      </select>
+      
+      <div *ngIf="error" class="error-text">
+        {{ error }}
+      </div>
+    </div>
+    
+    <div *ngIf="selectedSpeaker && showSpeakerDetails" class="speaker-details">
+      <div class="speaker-card">
+        <div class="speaker-avatar">
+          <img *ngIf="selectedSpeaker.imageUrl" [src]="selectedSpeaker.imageUrl" [alt]="selectedSpeaker.name">
+          <div *ngIf="!selectedSpeaker.imageUrl" class="avatar-placeholder">
+            {{ selectedSpeaker.name.charAt(0) }}
+          </div>
+        </div>
+        
+        <div class="speaker-info">
+          <h4>{{ selectedSpeaker.name }}</h4>
+          <p>{{ selectedSpeaker.bio }}</p>
+        </div>
+      </div>
+      
+      <button type="button" class="btn-close" (click)="toggleSpeakerDetails()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div *ngIf="selectedSpeaker && !showSpeakerDetails" class="speaker-summary">
+      <span class="selected-speaker">{{ selectedSpeaker.name }}</span>
+      <button type="button" class="btn-details" (click)="toggleSpeakerDetails()">
+        <i class="fas fa-info-circle"></i> Ver detalles
+      </button>
+    </div>
+</div>
