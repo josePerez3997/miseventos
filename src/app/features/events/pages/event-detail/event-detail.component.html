@@ -1,137 +1,144 @@
 <div class="event-detail-container">
-    <div *ngIf="loading" class="loading-spinner">
-      <div class="spinner"></div>
-      <p>Cargando detalle del evento details...</p>
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Loading event details...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+    <button (click)="loadEvent()" class="retry-button">Try Again</button>
+  </div>
+
+  <div *ngIf="!loading && !error && event" class="event-detail">
+    <div class="breadcrumbs">
+      <a routerLink="/">Home</a> &gt;
+      <a routerLink="/events">Events</a> &gt;
+      <span>{{ event.name }}</span>
     </div>
-  
-    <div *ngIf="error" class="error-message">
-      {{ error }}
-      <button (click)="loadEvent()" class="retry-button">Reintentar</button>
-    </div>
-  
-    <div *ngIf="!loading && !error && event" class="event-detail">
-      <div class="breadcrumbs">
-        <a routerLink="/">Inicio</a> &gt;
-        <a routerLink="/events">Evento</a> &gt;
-        <span>{{ event.name }}</span>
+
+    <div class="event-header">
+      <div class="event-image">
+        <img [src]="event.imageUrl || 'assets/images/event-placeholder.jpg'" [alt]="event.name">
+        <span class="event-status" [ngClass]="getEventStatusClass()">{{ event.status }}</span>
       </div>
-  
-      <div class="event-header">
-        <div class="event-image">
-          <img [src]="event.imageUrl || 'assets/images/event-placeholder.jpg'" [alt]="event.name">
-          <span class="event-status" [ngClass]="getEventStatusClass()">{{ event.status }}</span>
-        </div>
-        <div class="event-header-content">
-          <h1 class="event-title">{{ event.name }}</h1>
-          <div class="event-meta">
-            <div class="meta-item">
-              <i class="meta-icon fas fa-calendar-alt"></i>
-              <span>{{ formatDateRange(event.date, event.endDate) }}</span>
-            </div>
-            <div class="meta-item">
-              <i class="meta-icon fas fa-map-marker-alt"></i>
-              <span>{{ event.location }}</span>
-            </div>
-            <div class="meta-item">
-              <i class="meta-icon fas fa-user"></i>
-              <span>Organizado por {{ event.organizer?.name || 'Unknown' }}</span>
-            </div>
-          </div>
-  
-          <div class="event-categories" *ngIf="event.categories && event.categories.length > 0">
-            <span *ngFor="let category of event.categories" class="category-tag">{{ category }}</span>
-          </div>
-  
-          <div class="event-capacity">
-            <div class="capacity-info">
-              <span class="capacity-count">{{ event.registeredAttendees }} / {{ event.capacity }}</span>
-              <span class="capacity-label">Asistentes</span>
-            </div>
-            <div class="capacity-bar">
-              <div class="capacity-progress" [style.width.%]="(event.registeredAttendees / event.capacity) * 100"></div>
-            </div>
-            <span class="capacity-status" 
-                  [ngClass]="{'spots-available': !isEventFull, 'fully-booked': isEventFull}">
-              {{ isEventFull ? 'Está completo' : availableSpots + ' Plazas Disponibles' }}
-            </span>
-          </div>
-  
-          <div class="event-actions">
-            <button *ngIf="canRegister" 
-                    (click)="registerForEvent()" 
-                    class="btn btn-register"
-                    [disabled]="isRegistering">
-              {{ isRegistering ? 'Registering...' : 'Register for Event' }}
-            </button>
-            
-            <button *ngIf="canCancelRegistration" 
-                    (click)="cancelRegistration()" 
-                    class="btn btn-cancel"
-                    [disabled]="isCancellingRegistration">
-              {{ isCancellingRegistration ? 'Cancelando...' : 'Cancelar Registro' }}
-            </button>
-            
-            <div *ngIf="isRegistered && !canCancelRegistration" class="registration-badge">
-              Estás registrado a este evento.
-            </div>
-            
-            <a *ngIf="!isAuthenticated" 
-               [routerLink]="['/auth/login']" 
-               [queryParams]="{returnUrl: '/events/' + eventId}" 
-               class="btn btn-login">
-              Inicia sesión para registrar.
-            </a>
-            
-            <div *ngIf="isPastEvent" class="event-past-notice">
-              Este evento ha sido {{ event.status === 'COMPLETED' ? 'ended' : 'been cancelled' }}
-            </div>
-          </div>
-        </div>
-      </div>
-  
-      <div class="section-divider"></div>
-  
-      <div class="event-description-section">
-        <h2>Acerca del evento</h2>
-        <div class="event-description">
-          <p>{{ event.description }}</p>
-        </div>
-      </div>
-  
-      <div class="section-divider"></div>
-  
-      <div class="event-sessions-section" *ngIf="event.sessions && event.sessions.length > 0">
-        <h2>Sesiones del Evento</h2>
+      <div class="event-header-content">
+        <h1 class="event-title">{{ event.name }}</h1>
         
-        <div *ngFor="let day of sessionsByDay" class="sessions-day">
-          <h3 class="day-heading">{{ day.date | date:'EEEE, MMMM d, y' }}</h3>
-          
-          <div class="session-list">
-            <app-session-card 
-              *ngFor="let session of day.sessions" 
-              [session]="session">
-            </app-session-card>
+        <div *ngIf="isOrganizer" class="edit-button">
+          <a [routerLink]="['/events', eventId, 'edit']" class="btn btn-edit">
+            <i class="fas fa-edit"></i> Edit Event
+          </a>
+        </div>
+        
+        <div class="event-meta">
+          <div class="meta-item">
+            <i class="meta-icon fas fa-calendar-alt"></i>
+            <span>{{ formatDateRange(event.date, event.endDate) }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="meta-icon fas fa-map-marker-alt"></i>
+            <span>{{ event.location }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="meta-icon fas fa-user"></i>
+            <span>Organized by {{ event.organizer?.name || 'Unknown' }}</span>
           </div>
         </div>
-      </div>
-  
-      <div *ngIf="!event.sessions || event.sessions.length === 0" class="no-sessions">
-        <p>No hay sesiones para este evento.</p>
-      </div>
-  
-      <div class="section-divider"></div>
-  
-      <div *ngIf="event.organizer" class="event-organizer-section">
-        <h2>Organizador</h2>
-        <div class="organizer-card">
-          <div class="organizer-image" *ngIf="event.organizer.imageUrl">
-            <img [src]="event.organizer.imageUrl" alt="{{ event.organizer.name }}">
+
+        <div class="event-categories" *ngIf="event.categories && event.categories.length > 0">
+          <span *ngFor="let category of event.categories" class="category-tag">{{ category }}</span>
+        </div>
+
+        <div class="event-capacity">
+          <div class="capacity-info">
+            <span class="capacity-count">{{ event.registeredAttendees }} / {{ event.capacity }}</span>
+            <span class="capacity-label">Attendees</span>
           </div>
-          <div class="organizer-info">
-            <h3>{{ event.organizer.name }}</h3>
-            <p class="organizer-role">Orgnizador del Evento</p>
+          <div class="capacity-bar">
+            <div class="capacity-progress" [style.width.%]="(event.registeredAttendees / event.capacity) * 100"></div>
+          </div>
+          <span class="capacity-status" 
+                [ngClass]="{'spots-available': !isEventFull, 'fully-booked': isEventFull}">
+            {{ isEventFull ? 'Fully Booked' : availableSpots + ' spots available' }}
+          </span>
+        </div>
+
+        <div class="event-actions">
+          <button *ngIf="canRegister" 
+                  (click)="registerForEvent()" 
+                  class="btn btn-register"
+                  [disabled]="isRegistering">
+            {{ isRegistering ? 'Registering...' : 'Register for Event' }}
+          </button>
+          
+          <button *ngIf="canCancelRegistration" 
+                  (click)="cancelRegistration()" 
+                  class="btn btn-cancel"
+                  [disabled]="isCancellingRegistration">
+            {{ isCancellingRegistration ? 'Cancelling...' : 'Cancel Registration' }}
+          </button>
+          
+          <div *ngIf="isRegistered && !canCancelRegistration" class="registration-badge">
+            You are registered for this event
+          </div>
+          
+          <a *ngIf="!isAuthenticated" 
+             [routerLink]="['/auth/login']" 
+             [queryParams]="{returnUrl: '/events/' + eventId}" 
+             class="btn btn-login">
+            Login to Register
+          </a>
+          
+          <div *ngIf="isPastEvent" class="event-past-notice">
+            This event has {{ event.status === 'COMPLETED' ? 'ended' : 'been cancelled' }}
           </div>
         </div>
       </div>
     </div>
+
+    <div class="section-divider"></div>
+
+    <div class="event-description-section">
+      <h2>About This Event</h2>
+      <div class="event-description">
+        <p>{{ event.description }}</p>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div class="event-sessions-section" *ngIf="event.sessions && event.sessions.length > 0">
+      <h2>Event Sessions</h2>
+      
+      <div *ngFor="let day of sessionsByDay" class="sessions-day">
+        <h3 class="day-heading">{{ day.date | date:'EEEE, MMMM d, y' }}</h3>
+        
+        <div class="session-list">
+          <app-session-card 
+            *ngFor="let session of day.sessions" 
+            [session]="session">
+          </app-session-card>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!event.sessions || event.sessions.length === 0" class="no-sessions">
+      <p>No sessions have been scheduled for this event yet.</p>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div *ngIf="event.organizer" class="event-organizer-section">
+      <h2>Organizer</h2>
+      <div class="organizer-card">
+        <div class="organizer-image" *ngIf="event.organizer.imageUrl">
+          <img [src]="event.organizer.imageUrl" alt="{{ event.organizer.name }}">
+        </div>
+        <div class="organizer-info">
+          <h3>{{ event.organizer.name }}</h3>
+          <p class="organizer-role">Event Organizer</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

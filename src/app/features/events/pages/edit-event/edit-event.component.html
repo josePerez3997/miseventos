@@ -1,0 +1,186 @@
+<div class="edit-event-container">
+    <div class="page-header">
+      <h1>Edit Event</h1>
+      <p>Update the information for your event.</p>
+    </div>
+  
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+  
+    <div *ngIf="isLoading" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading event data...</p>
+    </div>
+  
+    <form *ngIf="!isLoading && !errorMessage" [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+      <div class="form-section">
+        <h2>Basic Information</h2>
+        
+        <div class="form-group">
+          <label for="name">Event Name *</label>
+          <input 
+            type="text" 
+            id="name" 
+            formControlName="name" 
+            placeholder="Enter event name"
+            class="form-control" 
+            [ngClass]="{'is-invalid': name?.invalid && (name?.dirty || name?.touched)}"
+          >
+          <div *ngIf="name?.invalid && (name?.dirty || name?.touched)" class="error-feedback">
+            <div *ngIf="name?.errors?.['required']">Event name is required.</div>
+            <div *ngIf="name?.errors?.['minlength']">Event name must be at least 5 characters.</div>
+            <div *ngIf="name?.errors?.['maxlength']">Event name cannot exceed 100 characters.</div>
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="description">Description *</label>
+          <textarea 
+            id="description" 
+            formControlName="description" 
+            placeholder="Describe your event in detail"
+            class="form-control" 
+            [ngClass]="{'is-invalid': description?.invalid && (description?.dirty || description?.touched)}"
+            rows="5"
+          ></textarea>
+          <div *ngIf="description?.invalid && (description?.dirty || description?.touched)" class="error-feedback">
+            <div *ngIf="description?.errors?.['required']">Description is required.</div>
+            <div *ngIf="description?.errors?.['minlength']">Description must be at least 20 characters.</div>
+            <div *ngIf="description?.errors?.['maxlength']">Description cannot exceed 2000 characters.</div>
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="location">Location *</label>
+          <input 
+            type="text" 
+            id="location" 
+            formControlName="location" 
+            placeholder="Enter event location"
+            class="form-control" 
+            [ngClass]="{'is-invalid': location?.invalid && (location?.dirty || location?.touched)}"
+          >
+          <div *ngIf="location?.invalid && (location?.dirty || location?.touched)" class="error-feedback">
+            <div *ngIf="location?.errors?.['required']">Location is required.</div>
+            <div *ngIf="location?.errors?.['minlength']">Location must be at least 5 characters.</div>
+            <div *ngIf="location?.errors?.['maxlength']">Location cannot exceed 200 characters.</div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="form-section">
+        <h2>Date & Capacity</h2>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="date">Start Date *</label>
+            <input 
+              type="date" 
+              id="date" 
+              formControlName="date" 
+              class="form-control" 
+              [ngClass]="{'is-invalid': date?.invalid && (date?.dirty || date?.touched)}"
+            >
+            <div *ngIf="date?.invalid && (date?.dirty || date?.touched)" class="error-feedback">
+              <div *ngIf="date?.errors?.['required']">Start date is required.</div>
+            </div>
+            <div *ngIf="isPastDate(date?.value)" class="warning-feedback">
+              Warning: You are selecting a date in the past.
+            </div>
+          </div>
+  
+          <div class="form-group">
+            <label for="endDate">End Date</label>
+            <input 
+              type="date" 
+              id="endDate" 
+              formControlName="endDate" 
+              class="form-control"
+              [min]="formatDateForInput(date?.value)"
+            >
+            <small class="form-text text-muted">Leave empty for single-day events.</small>
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="capacity">Capacity *</label>
+          <input 
+            type="number" 
+            id="capacity" 
+            formControlName="capacity" 
+            class="form-control" 
+            [ngClass]="{'is-invalid': capacity?.invalid && (capacity?.dirty || capacity?.touched)}"
+            min="1"
+          >
+          <div *ngIf="capacity?.invalid && (capacity?.dirty || capacity?.touched)" class="error-feedback">
+            <div *ngIf="capacity?.errors?.['required']">Capacity is required.</div>
+            <div *ngIf="capacity?.errors?.['min']">Capacity must be at least 1.</div>
+            <div *ngIf="capacity?.errors?.['max']">Capacity cannot exceed 10000.</div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="form-section">
+        <h2>Additional Details</h2>
+        
+        <div class="form-group">
+          <label for="status">Event Status *</label>
+          <select 
+            id="status" 
+            formControlName="status" 
+            class="form-control" 
+            [ngClass]="{'is-invalid': status?.invalid && (status?.dirty || status?.touched)}"
+          >
+            <option *ngFor="let statusOption of eventStatuses" [value]="statusOption">
+              {{ statusOption }}
+            </option>
+          </select>
+          <div *ngIf="status?.invalid && (status?.dirty || status?.touched)" class="error-feedback">
+            <div *ngIf="status?.errors?.['required']">Status is required.</div>
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="categories">Categories</label>
+          <select 
+            id="categories" 
+            formControlName="categories" 
+            class="form-control" 
+            multiple
+          >
+            <option *ngFor="let category of availableCategories" [value]="category">
+              {{ category }}
+            </option>
+          </select>
+          <small class="form-text text-muted">Hold Ctrl (or Cmd on Mac) to select multiple categories.</small>
+        </div>
+  
+        <div class="form-group">
+          <label for="imageUrl">Image URL</label>
+          <input 
+            type="url" 
+            id="imageUrl" 
+            formControlName="imageUrl" 
+            placeholder="Enter URL for event image (optional)"
+            class="form-control"
+          >
+          <small class="form-text text-muted">Leave empty to use a generated image based on category.</small>
+        </div>
+      </div>
+  
+      <div class="form-actions">
+        <button type="button" class="btn btn-danger" (click)="onDelete()" [disabled]="isSubmitting">
+          Delete Event
+        </button>
+        <div class="form-actions-right">
+          <button type="button" class="btn btn-secondary" [routerLink]="['/events', eventId]">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="eventForm.invalid || isSubmitting">
+            {{ isSubmitting ? 'Saving Changes...' : 'Save Changes' }}
+          </button>
+        </div>
+      </div>
+    </form>
+</div>
