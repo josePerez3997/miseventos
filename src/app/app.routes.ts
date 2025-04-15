@@ -7,6 +7,7 @@ import { MyEventsComponent } from './features/events/pages/my-events/my-events.c
 import { ProfilePageComponent } from './features/profile/pages/profile-page/profile-page.component';
 import { EventDetailComponent } from './features/events/pages/event-detail/event-detail.component';
 import { EditEventComponent } from './features/events/pages/edit-event/edit-event.component';
+import { SessionFormComponent } from './features/sessions/pages/session-form/session-form.component';
 
 export const routes: Routes = [
   {
@@ -57,6 +58,16 @@ export const routes: Routes = [
         path: 'events/:id/edit',
         canActivate: [authGuard],
         component: EditEventComponent
+      },
+      {
+        path: 'events/:eventId/sessions/create',
+        canActivate: [authGuard],
+        component: SessionFormComponent
+      },
+      {
+        path: 'events/:eventId/sessions/:sessionId/edit',
+        canActivate: [authGuard],
+        component: SessionFormComponent
       },
       {
         path: 'my-events',

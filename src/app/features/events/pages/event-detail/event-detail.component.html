@@ -108,17 +108,11 @@
     <div class="section-divider"></div>
 
     <div class="event-sessions-section" *ngIf="event.sessions && event.sessions.length > 0">
-      <h2>Event Sessions</h2>
-      
-      <div *ngFor="let day of sessionsByDay" class="sessions-day">
-        <h3 class="day-heading">{{ day.date | date:'EEEE, MMMM d, y' }}</h3>
-        
-        <div class="session-list">
-          <app-session-card 
-            *ngFor="let session of day.sessions" 
-            [session]="session">
-          </app-session-card>
-        </div>
+      <div class="event-sessions-section">
+        <app-session-list 
+          [eventId]="eventId" 
+          [isOrganizer]="isOrganizer">
+        </app-session-list>
       </div>
     </div>
 
