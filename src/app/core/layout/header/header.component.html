@@ -1,0 +1,45 @@
+<header class="main-header">
+    <div class="container">
+      <div class="logo">
+        <a routerLink="/">
+          <span class="logo-text">Mis Eventos</span>
+        </a>
+      </div>
+      
+      <button class="mobile-menu-toggle" (click)="toggleMobileMenu = !toggleMobileMenu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      
+      <nav class="navigation" [ngClass]="{'open': toggleMobileMenu}">
+        <ul class="nav-links">
+          <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a></li>
+          <li><a routerLink="/events" routerLinkActive="active">Eventos</a></li>
+          <ng-container *ngIf="isLoggedIn">
+            <li><a routerLink="/my-events" routerLinkActive="active">Mis Eventos</a></li>
+            <li><a routerLink="/create-event" routerLinkActive="active">Crear Evento</a></li>
+          </ng-container>
+        </ul>
+        
+        <div class="auth-buttons">
+          <ng-container *ngIf="!isLoggedIn; else userMenu">
+            <a routerLink="/auth/login" class="btn btn-login">iniciar sesión</a>
+            <a routerLink="/auth/register" class="btn btn-register">Registrarse</a>
+          </ng-container>
+          
+          <ng-template #userMenu>
+            <div class="user-menu">
+              <a routerLink="/profile" class="user-profile">
+                <span class="user-icon">
+                  <i class="fas fa-user-circle"></i>
+                </span>
+                <span class="user-name">{{ userName || 'Profile' }}</span>
+              </a>
+              <button class="btn btn-logout" (click)="logout()">Cerrar Sesión</button>
+            </div>
+          </ng-template>
+        </div>
+      </nav>
+    </div>
+</header>

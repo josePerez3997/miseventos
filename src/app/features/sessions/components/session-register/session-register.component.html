@@ -1,0 +1,53 @@
+<div class="session-register-container">
+    <div class="capacity-info">
+      <div class="capacity-label">Capacidad:</div>
+      <div class="capacity-counter">
+        <span>{{ session.registeredAttendees }} / {{ session.capacity }}</span>
+        <div class="capacity-bar">
+          <div class="capacity-progress" [style.width.%]="(session.registeredAttendees / session.capacity) * 100"></div>
+        </div>
+      </div>
+      <div class="availability" [ngClass]="{'available': !isSessionFull, 'full': isSessionFull}">
+        <i class="fas" [ngClass]="{'fa-check-circle': !isSessionFull, 'fa-times-circle': isSessionFull}"></i>
+        <span *ngIf="!isSessionFull">{{ availableSpots }} plazas disponibles</span>
+        <span *ngIf="isSessionFull">Sesión completa</span>
+      </div>
+    </div>
+    
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+    
+    <div class="registration-actions">
+      <button *ngIf="!isAuthenticated" 
+              class="btn btn-login" 
+              [routerLink]="['/auth/login']" 
+              [queryParams]="{returnUrl: '/events/' + session.eventId}">
+        <i class="fas fa-sign-in-alt"></i> Iniciar sesión para registrarse
+      </button>
+      
+      <button *ngIf="canRegister" 
+              class="btn btn-register" 
+              [disabled]="isRegistering"
+              (click)="registerForSession()">
+        <i class="fas" [ngClass]="{'fa-spinner fa-spin': isRegistering, 'fa-user-plus': !isRegistering}"></i>
+        {{ isRegistering ? 'Registrando...' : 'Registrarse para esta sesión' }}
+      </button>
+      
+      <button *ngIf="canCancelRegistration" 
+              class="btn btn-cancel" 
+              [disabled]="isCancelling"
+              (click)="cancelRegistration()">
+        <i class="fas" [ngClass]="{'fa-spinner fa-spin': isCancelling, 'fa-user-minus': !isCancelling}"></i>
+        {{ isCancelling ? 'Cancelando...' : 'Cancelar registro' }}
+      </button>
+      
+      <div *ngIf="isRegistered" class="registration-badge">
+        <i class="fas fa-check"></i> Estás registrado para esta sesión
+      </div>
+      
+      <div *ngIf="isSessionFull && !isRegistered" class="full-message">
+        <i class="fas fa-exclamation-circle"></i> Esta sesión ha alcanzado su capacidad máxima
+      </div>
+    </div>
+</div>

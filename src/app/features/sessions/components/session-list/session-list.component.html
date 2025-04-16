@@ -1,0 +1,48 @@
+<div class="session-list-container">
+    <div class="section-header">
+      <h2>Sesiones del Evento</h2>
+      <button *ngIf="isOrganizer" [routerLink]="['/events', eventId, 'sessions', 'create']" class="btn btn-primary add-session-btn">
+        <i class="fas fa-plus-circle"></i> Añadir Sesión
+      </button>
+    </div>
+  
+    <div *ngIf="loading" class="loading-indicator">
+      <div class="spinner"></div>
+      <p>Cargando sesiones...</p>
+    </div>
+  
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+      <button (click)="loadSessions()" class="btn btn-retry">Reintentar</button>
+    </div>
+  
+    <div *ngIf="!loading && !error">
+      <div *ngIf="sessions.length === 0" class="no-sessions-message">
+        <p>No hay sesiones programadas para este evento.</p>
+        <button *ngIf="isOrganizer" [routerLink]="['/events', eventId, 'sessions', 'create']" class="btn btn-primary">
+          Crear Primera Sesión
+        </button>
+      </div>
+  
+      <div *ngIf="sessions.length > 0">
+        <div *ngFor="let day of sessionsByDay" class="session-day">
+          <h3 class="day-header">{{ day.date | date:'EEEE, d MMMM, yyyy' }}</h3>
+          
+          <div class="session-cards">
+            <div *ngFor="let session of day.sessions" class="session-item">
+              <app-session-card [session]="session"></app-session-card>
+              
+              <div *ngIf="isOrganizer" class="session-actions">
+                <button [routerLink]="['/events', eventId, 'sessions', session.id, 'edit']" class="btn btn-edit">
+                  <i class="fas fa-edit"></i> Editar
+                </button>
+                <button (click)="deleteSession(session.id)" class="btn btn-delete">
+                  <i class="fas fa-trash-alt"></i> Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>

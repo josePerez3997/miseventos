@@ -1,0 +1,70 @@
+<div class="home-container">
+    <section class="hero-section">
+      <div class="hero-content">
+        <h1>Descubra evento increíbles</h1>
+        <p>Encuentra y regístrate en los mejores eventos en tu zona</p>
+        <div class="search-container">
+          <input 
+            type="text" 
+            [formControl]="searchControl"
+  
+            placeholder="Buscar eventos..." 
+            class="search-input"
+          >
+          <button class="search-button">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+  
+    <section class="events-section">
+      <div class="section-header">
+        <h2>Próximos eventos</h2>
+        <div class="filters">
+        </div>
+      </div>
+  
+      <div *ngIf="loading" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Cargando eventos...</p>
+      </div>
+  
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+        <button (click)="loadEvents()" class="retry-button">Intentar otra vez</button>
+      </div>
+  
+      <div *ngIf="!loading && !error">
+        <div *ngIf="events.length === 0" class="no-events">
+          <p>No se encontraron eventos que coincidan con tus criterios. Intenta ajustar tu búsqueda.</p>
+        </div>
+  
+        <div *ngIf="events.length > 0" class="events-grid">
+          <div *ngFor="let event of events" class="event-item">
+            <app-event-card [event]="event"></app-event-card>
+          </div>
+        </div>
+  
+        <div *ngIf="totalEvents > pageSize" class="pagination">
+          <button 
+            [disabled]="page === 1" 
+            (click)="onPageChange(page - 1)" 
+            class="pagination-button">
+            Anterior
+          </button>
+          
+          <span class="pagination-info">
+            Página {{ page }} of {{ Math.ceil(totalEvents / pageSize) }}
+          </span>
+          
+          <button 
+            [disabled]="page >= Math.ceil(totalEvents / pageSize)" 
+            (click)="onPageChange(page + 1)" 
+            class="pagination-button">
+            Siguiente
+          </button>
+        </div>
+      </div>
+    </section>
+</div>

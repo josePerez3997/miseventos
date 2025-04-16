@@ -1,0 +1,123 @@
+.event-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff;
+    height: 100%;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .event-image {
+        position: relative;
+        height: 180px;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .event-status {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+
+            &.status-upcoming {
+                background-color: #ebf5ff;
+                color: #0066cc;
+            }
+
+            &.status-ongoing {
+                background-color: #e8faf0;
+                color: #00aa55;
+            }
+
+            &.status-completed {
+                background-color: #f0f0f0;
+                color: #555555;
+            }
+
+            &.status-cancelled {
+                background-color: #ffebee;
+                color: #e53935;
+            }
+        }
+    }
+
+    .event-content {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        .event-title {
+            margin: 0 0 8px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .event-date,
+        .event-location {
+            margin: 0 0 8px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .event-description {
+            margin: 8px 0 16px;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .event-capacity {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 16px;
+
+            .spots-available {
+                color: #00aa55;
+            }
+
+            .fully-booked {
+                color: #e53935;
+                font-weight: 600;
+            }
+        }
+
+        .event-actions {
+            margin-top: auto;
+
+            .btn {
+                border: none;
+                border-radius: 4px;
+                padding: 8px 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+
+                &.btn-primary {
+                    background-color: #0066cc;
+                    color: white;
+
+                    &:hover {
+                        background-color: #0055aa;
+                    }
+                }
+            }
+        }
+    }
+}

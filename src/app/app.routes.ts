@@ -1,3 +1,88 @@
 import { Routes } from '@angular/router';
+import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
+import { HomePageComponent } from './features/home/pages/home-page/home-page.component';
+import { authGuard, noAuthGuard } from './features/auth/guards/auth.guard';
+import { CreateEventComponent } from './features/events/pages/create-event/create-event.component';
+import { MyEventsComponent } from './features/events/pages/my-events/my-events.component';
+import { ProfilePageComponent } from './features/profile/pages/profile-page/profile-page.component';
+import { EventDetailComponent } from './features/events/pages/event-detail/event-detail.component';
+import { EditEventComponent } from './features/events/pages/edit-event/edit-event.component';
+import { SessionFormComponent } from './features/sessions/pages/session-form/session-form.component';
 
-export const routes: Routes = [];
+export const routes: Routes = [
+  {
+    path: '',
+    component: MainLayoutComponent,
+    children: [
+      {
+        path: '',
+        component: HomePageComponent
+      },
+      {
+        path: 'events/:id',
+        component: EventDetailComponent
+      },
+      {
+        path: 'auth',
+        canActivate: [noAuthGuard],
+        children: [
+          {
+            path: 'login',
+            loadComponent: () => import('./features/auth/pages/login/login.component').then(m => m.LoginComponent)
+          },
+          {
+            path: 'register',
+            loadComponent: () => import('./features/auth/pages/register/register.component').then(m => m.RegisterComponent)
+          },
+          {
+            path: 'forgot-password',
+            loadComponent: () => import('./features/auth/pages/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
+          },
+          {
+            path: 'reset-password',
+            loadComponent: () => import('./features/auth/pages/reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
+          },
+          {
+            path: '',
+            redirectTo: 'login',
+            pathMatch: 'full'
+          }
+        ]
+      },
+      {
+        path: 'create-event',
+        canActivate: [authGuard],
+        component: CreateEventComponent
+      },
+      {
+        path: 'events/:id/edit',
+        canActivate: [authGuard],
+        component: EditEventComponent
+      },
+      {
+        path: 'events/:eventId/sessions/create',
+        canActivate: [authGuard],
+        component: SessionFormComponent
+      },
+      {
+        path: 'events/:eventId/sessions/:sessionId/edit',
+        canActivate: [authGuard],
+        component: SessionFormComponent
+      },
+      {
+        path: 'my-events',
+        canActivate: [authGuard],
+        component: MyEventsComponent
+      },
+      {
+        path: 'profile',
+        canActivate: [authGuard],
+        component: ProfilePageComponent
+      },
+      {
+        path: '**',
+        redirectTo: ''
+      }
+    ]
+  }
+];
